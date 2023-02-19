@@ -6,27 +6,14 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Cartful.Service.Repositories
 {
-    public class accountRepository
+    public class AccountRepository
     {
 
         SqlConnection _connection;
 
-        public accountRepository(SqlConnection connection)
+        public AccountRepository(SqlConnection connection)
         {
             this._connection = connection;
-        }
-
-        // calls to databases are often async because they take a long time to complete
-        // this setup allows the program to do other stuff while this function is still running
-        // get all entries in db
-        public async Task<IReadOnlyCollection<T>> GetAllAsync()
-        {
-            return await dbCollection.Find(filterBuilder.Empty).ToListAsync();
-        }
-
-        public async Task<IReadOnlyCollection<T>> GetAllAsync(Expression<Func<T, bool>> filter)
-        {
-            return await dbCollection.Find(filter).ToListAsync();
         }
 
         // get entry by id
@@ -40,7 +27,7 @@ namespace Cartful.Service.Repositories
             command.Parameters.AddWithValue("@Id", id);
 
             // execute the command and retrieve the results
-            SqlDataReader reader = command.ExecuteReader();
+            SqlDataReader reader = await command.ExecuteReaderAsync();
 
             if (reader.Read())
             {
@@ -63,15 +50,12 @@ namespace Cartful.Service.Repositories
 
         }
 
-        public async Task<T> GetAsync(Expression<Func<T, bool>> filter)
-        {
-            return await dbCollection.Find(filter).FirstOrDefaultAsync();
-        }
-
         // add item to db
         public async Task<IActionResult> CreateAsync(Account account)
         {
-            string sql = "INSERT INTO user (Column1, Column2, Column3, Column4, Column5, Column6) VALUES (@Value1, @Value2, @Value3, @Value4, @Value5, @Value6)";
+            _connection.Open();
+            
+            string sql = "INSERT INTO user (userID, firstName, lastName, userName, phoneNumber, password) VALUES (@Value1, @Value2, @Value3, @Value4, @Value5, @Value6)";
             SqlCommand command = new SqlCommand(sql, _connection);
 
             // Set the values of the parameters
@@ -84,6 +68,7 @@ namespace Cartful.Service.Repositories
 
             // Execute the command
             int rowsAffected = await command.ExecuteNonQueryAsync();
+            _connection.Close();
 
             if (rowsAffected <= 0)
             {
@@ -93,23 +78,6 @@ namespace Cartful.Service.Repositories
             {
                 return new OkResult();
             }
-        }
-
-        public async Task UpdateAsync(T entity)
-        {
-            if (entity == null)
-            {
-                throw new ArgumentException(nameof(entity));
-            }
-
-            FilterDefinition<T> filter = filterBuilder.Eq(existingEntity => existingEntity.Id, entity.Id);
-            await dbCollection.ReplaceOneAsync(filter, entity);
-        }
-
-        public async Task RemoveAsync(Guid id)
-        {
-            FilterDefinition<T> filter = filterBuilder.Eq(entity => entity.Id, id);
-            await dbCollection.DeleteOneAsync(filter);
         }
     }
 }

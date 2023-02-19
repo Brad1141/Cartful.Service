@@ -10,8 +10,8 @@ namespace Cartful.Service.Controllers;
 public class AccountController : ControllerBase
 {
 
-    private readonly IRepository<Account> accountRepository;
-    public AccountController(IRepository<Account> accountRepository)
+    private readonly AccountRepository accountRepository;
+    public AccountController(AccountRepository accountRepository)
     {
         this.accountRepository = accountRepository;
     }
