@@ -29,7 +29,7 @@ public class AccountController : ControllerBase
             lastName = accountDto.lastName,
             password = accountDto.password,
             phoneNumber = accountDto.phoneNumber
-            
+
         };
 
         await accountRepository.CreateAsync(newAccount);
