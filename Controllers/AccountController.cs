@@ -16,23 +16,40 @@ public class AccountController : ControllerBase
         this.accountRepository = accountRepository;
     }
 
+    [HttpGet]
+    [Route("GetAccount")]
+    public async Task<ActionResult<AccountDto>> GetAccount(string username, string password)
+    {
+        var creds = new Account
+        {
+            userName = username,
+            password = password
+        };
+
+        var result = await accountRepository.GetAsync(creds);
+        return result;
+    }
+
     [HttpPost]
-    public async Task<ActionResult<AccountDto>> Post(AccountDto accountDto)
+    [Route("CreateAccount")]
+    public async Task<IActionResult> CreateAccount(AccountDto accountDto)
     {
         // generate guid
-        Guid newGuid = new Guid();
+        Guid newGuid = Guid.NewGuid();
 
         var newAccount = new Account
         {
             userId = newGuid,
             firstName = accountDto.firstName,
             lastName = accountDto.lastName,
+            userName = accountDto.userName,
             password = accountDto.password,
             phoneNumber = accountDto.phoneNumber
 
         };
 
         await accountRepository.CreateAsync(newAccount);
-        return CreatedAtAction("New Account", new { userId = newAccount.userId }, newAccount);
+        return CreatedAtAction(nameof(CreateAccount), new { id = newAccount.userId }, newAccount);
+        
     }
 }

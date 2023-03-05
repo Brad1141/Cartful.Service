@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using Cartful.Service.Entities;
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Cartful.Service.Dtos;
 
 namespace Cartful.Service.Repositories
 {
@@ -17,26 +18,28 @@ namespace Cartful.Service.Repositories
         }
 
         // get entry by id
-        public async Task<ActionResult<Account>> GetAsync(Guid id)
+        public async Task<ActionResult<AccountDto>> GetAsync(Account creds)
         {
             _connection.Open();
 
             // create a SQL command to select data from a table based on its ID
-            string sql = "SELECT * FROM MyTable WHERE Id = @Id";
+            string sql = "SELECT * FROM [dbo].[user] WHERE userName = @username AND password = @password";
             SqlCommand command = new SqlCommand(sql, _connection);
-            command.Parameters.AddWithValue("@Id", id);
+            command.Parameters.AddWithValue("@username", creds.userName);
+            command.Parameters.AddWithValue("@password", creds.password);
 
             // execute the command and retrieve the results
             SqlDataReader reader = await command.ExecuteReaderAsync();
 
             if (reader.Read())
             {
-                Account userAccount = new Account();
-                userAccount.firstName = reader.GetString(1);
-                userAccount.lastName = reader.GetString(2);
-                userAccount.userName = reader.GetString(3);
-                userAccount.password = reader.GetString(4);
-                userAccount.phoneNumber = reader.GetString(5);
+                AccountDto userAccount = new AccountDto(
+                    reader.GetString(1),
+                    reader.GetString(2),
+                    reader.GetString(3),
+                    reader.GetString(4),
+                    reader.GetString(5)
+                );
 
                 reader.Close();
                 _connection.Close();
@@ -55,7 +58,7 @@ namespace Cartful.Service.Repositories
         {
             _connection.Open();
             
-            string sql = "INSERT INTO user (userID, firstName, lastName, userName, phoneNumber, password) VALUES (@Value1, @Value2, @Value3, @Value4, @Value5, @Value6)";
+            string sql = "INSERT INTO [dbo].[user] (userID, firstName, lastName, userName, phoneNumber, password) VALUES (@Value1, @Value2, @Value3, @Value4, @Value5, @Value6)";
             SqlCommand command = new SqlCommand(sql, _connection);
 
             // Set the values of the parameters
