@@ -35,12 +35,12 @@ namespace Cartful.Service.Repositories
             {
                 Account userAccount = new Account
                 {
-                    userId = reader.GetGuid(1),
-                    firstName = reader.GetString(2),
-                    lastName = reader.GetString(3),
-                    userName = reader.GetString(4),
-                    password = reader.GetString(5),
-                    phoneNumber = reader.GetString(6)
+                    userId = Guid.ParseExact(reader.GetString(0), "D"),
+                    firstName = reader.GetString(1),
+                    lastName = reader.GetString(2),
+                    userName = reader.GetString(3),
+                    password = reader.GetString(4),
+                    phoneNumber = reader.GetString(5)
                     
                 };
 
