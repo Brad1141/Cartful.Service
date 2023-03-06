@@ -6,33 +6,19 @@ using Cartful.Service.Repositories;
 namespace Cartful.Service.Controllers;
 
 [ApiController]
-[Route("account")]
-public class AccountController : ControllerBase
+[Route("list")]
+public class ListController : ControllerBase
 {
 
     private readonly AccountRepository accountRepository;
-    public AccountController(AccountRepository accountRepository)
+    public ListController(AccountRepository accountRepository)
     {
         this.accountRepository = accountRepository;
     }
 
-    [HttpGet]
-    [Route("GetAccount")]
-    public async Task<ActionResult<Account>> GetAccount(string username, string password)
-    {
-        var creds = new Account
-        {
-            userName = username,
-            password = password
-        };
-
-        var result = await accountRepository.GetAsync(creds);
-        return result;
-    }
-
     [HttpPost]
-    [Route("CreateAccount")]
-    public async Task<IActionResult> CreateAccount(AccountDto accountDto)
+    [Route("CreateList")]
+    public async Task<IActionResult> CreateList(AccountDto accountDto)
     {
         // generate guid
         Guid newGuid = Guid.NewGuid();
@@ -49,7 +35,7 @@ public class AccountController : ControllerBase
         };
 
         await accountRepository.CreateAsync(newAccount);
-        return CreatedAtAction(nameof(CreateAccount), new { id = newAccount.userId }, newAccount);
-        
+        return CreatedAtAction(nameof(CreateList), new { id = newAccount.userId }, newAccount);
+
     }
 }
