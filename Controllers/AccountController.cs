@@ -18,7 +18,7 @@ public class AccountController : ControllerBase
 
     [HttpGet]
     [Route("GetAccount")]
-    public async Task<ActionResult<AccountDto>> GetAccount(string username, string password)
+    public async Task<ActionResult<Account>> GetAccount(string username, string password)
     {
         var creds = new Account
         {
