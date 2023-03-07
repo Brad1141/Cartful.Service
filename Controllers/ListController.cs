@@ -16,26 +16,42 @@ public class ListController : ControllerBase
         this.accountRepository = accountRepository;
     }
 
+    [HttpGet]
+    [Route("GetLists")]
+    public async Task<ActionResult<List<ItemList>>> GetLists(Guid userId)
+    {
+        // from list repo, call item repo to get all items 
+        List<ItemList> itemLists = await listRepository.GetAllAsync(userId);
+        return itemLists;
+    }
+
     [HttpPost]
     [Route("CreateList")]
-    public async Task<IActionResult> CreateList(AccountDto accountDto)
+    public async Task<IActionResult> CreateList(ListDto listDto)
     {
         // generate guid
         Guid newGuid = Guid.NewGuid();
 
-        var newAccount = new Account
+        var newList = new ItemList
         {
-            userId = newGuid,
-            firstName = accountDto.firstName,
-            lastName = accountDto.lastName,
-            userName = accountDto.userName,
-            password = accountDto.password,
-            phoneNumber = accountDto.phoneNumber
-
+            title = listDto.title,
+            userID = listDto.userID,
+            listID = newGuid
         };
 
-        await accountRepository.CreateAsync(newAccount);
-        return CreatedAtAction(nameof(CreateList), new { id = newAccount.userId }, newAccount);
+        List<Item> newItems = listDto.items;
 
+        await listRepository.CreateAsync(newList);
+        await itemsRepository.CreateAsync(newItems);
+        return CreatedAtAction(nameof(CreateList), new { id = newGuid }, newList);
+
+    }
+
+    [HttpDelete]
+    [Route("DeleteList")]
+    public async Task<IActionResult> DeleteList(Guid listId)
+    {
+        await listRepository.DeleteAsync(listId);
+        return Ok();
     }
 }
