@@ -7,12 +7,12 @@ using Cartful.Service.Dtos;
 
 namespace Cartful.Service.Repositories
 {
-    public class AccountRepository
+    public class CartfulRepository
     {
 
         SqlConnection _connection;
 
-        public AccountRepository(SqlConnection connection)
+        public CartfulRepository(SqlConnection connection)
         {
             this._connection = connection;
         }
@@ -85,5 +85,11 @@ namespace Cartful.Service.Repositories
                 return new OkResult();
             }
         }
+
+        //add list to database
+
+        // delete list from database
+
+        // get all list belonging to a user
     }
 }

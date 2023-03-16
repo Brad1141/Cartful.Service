@@ -10,10 +10,10 @@ namespace Cartful.Service.Controllers;
 public class AccountController : ControllerBase
 {
 
-    private readonly AccountRepository accountRepository;
-    public AccountController(AccountRepository accountRepository)
+    private readonly CartfulRepository cartfulRepository;
+    public AccountController(CartfulRepository cartfulRepository)
     {
-        this.accountRepository = accountRepository;
+        this.cartfulRepository = cartfulRepository;
     }
 
     [HttpGet]
@@ -26,7 +26,7 @@ public class AccountController : ControllerBase
             password = password
         };
 
-        var result = await accountRepository.GetAsync(creds);
+        var result = await cartfulRepository.GetAsync(creds);
         return result;
     }
 
@@ -48,7 +48,7 @@ public class AccountController : ControllerBase
 
         };
 
-        await accountRepository.CreateAsync(newAccount);
+        await cartfulRepository.CreateAsync(newAccount);
         return CreatedAtAction(nameof(CreateAccount), new { id = newAccount.userId }, newAccount);
         
     }

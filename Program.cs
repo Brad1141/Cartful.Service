@@ -24,7 +24,7 @@ SqlSettings? sqlSettings = config.GetSection("SqlSettings").Get<SqlSettings>();
 builder.Services.AddTransient<SqlConnection>(_ => new SqlConnection(sqlSettings?.connectionString));
 
 // Register the class that depends on the SqlConnection with the container.
-builder.Services.AddTransient<AccountRepository>();
+builder.Services.AddTransient<CartfulRepository>();
 
 
 var app = builder.Build();

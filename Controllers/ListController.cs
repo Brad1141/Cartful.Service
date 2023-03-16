@@ -10,10 +10,10 @@ namespace Cartful.Service.Controllers;
 public class ListController : ControllerBase
 {
 
-    private readonly AccountRepository accountRepository;
-    public ListController(AccountRepository accountRepository)
+    private readonly CartfulRepository cartfulRepository;
+    public ListController(CartfulRepository cartfulRepository)
     {
-        this.accountRepository = accountRepository;
+        this.cartfulRepository = cartfulRepository;
     }
 
     [HttpGet]
@@ -21,7 +21,7 @@ public class ListController : ControllerBase
     public async Task<ActionResult<List<ItemList>>> GetLists(Guid userId)
     {
         // from list repo, call item repo to get all items 
-        List<ItemList> itemLists = await listRepository.GetAllAsync(userId);
+        List<ItemList> itemLists = await cartfulRepository.GetAllAsync(userId);
         return itemLists;
     }
 
@@ -41,8 +41,8 @@ public class ListController : ControllerBase
 
         List<Item> newItems = listDto.items;
 
-        await listRepository.CreateAsync(newList);
-        await itemsRepository.CreateAsync(newItems);
+        await cartfulRepository.CreateAsync(newList);
+        await cartfulRepository.CreateAsync(newItems);
         return CreatedAtAction(nameof(CreateList), new { id = newGuid }, newList);
 
     }
@@ -51,7 +51,7 @@ public class ListController : ControllerBase
     [Route("DeleteList")]
     public async Task<IActionResult> DeleteList(Guid listId)
     {
-        await listRepository.DeleteAsync(listId);
+        await cartfulRepository.DeleteAsync(listId);
         return Ok();
     }
 }

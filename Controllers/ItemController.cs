@@ -10,17 +10,27 @@ namespace Cartful.Service.Controllers;
 public class ItemController : ControllerBase
 {
 
-    private readonly AccountRepository accountRepository;
-    public ItemController(AccountRepository accountRepository)
+    private readonly CartfulRepository cartfulRepository;
+    public ItemController(CartfulRepository cartfulRepository)
     {
-        this.accountRepository = accountRepository;
+        this.cartfulRepository = cartfulRepository;
+    }
+
+    [HttpGet]
+    [Route("GetItems")]
+    public async Task<List<Item>> GetItems(Guid listID)
+    {
+        List<Item> items = await cartfulRepository.GetAllAsync(listID);
+        return items;
     }
 
     [HttpPost]
     [Route("CreateItems")]
     public async Task<IActionResult> CreateItems(List<Item> items)
     {
-        await itemRepository.CreateAllAsync(items);
+        await cartfulRepository.CreateAllAsync(items);
         return CreatedAtAction(nameof(CreateItems), new { id = items[0].itemID }, items);
     }
+
+    //Delete Items
 }
