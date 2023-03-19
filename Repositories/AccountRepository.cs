@@ -18,7 +18,7 @@ namespace Cartful.Service.Repositories
         }
 
         // get entry by id
-        public async Task<ActionResult<AccountDto>> GetAsync(Account creds)
+        public async Task<ActionResult<Account>> GetAsync(Account creds)
         {
             _connection.Open();
 
@@ -33,13 +33,16 @@ namespace Cartful.Service.Repositories
 
             if (reader.Read())
             {
-                AccountDto userAccount = new AccountDto(
-                    reader.GetString(1),
-                    reader.GetString(2),
-                    reader.GetString(3),
-                    reader.GetString(4),
-                    reader.GetString(5)
-                );
+                Account userAccount = new Account
+                {
+                    userId = Guid.ParseExact(reader.GetString(0), "D"),
+                    firstName = reader.GetString(1),
+                    lastName = reader.GetString(2),
+                    userName = reader.GetString(3),
+                    password = reader.GetString(4),
+                    phoneNumber = reader.GetString(5)
+                    
+                };
 
                 reader.Close();
                 _connection.Close();
