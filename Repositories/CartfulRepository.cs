@@ -41,7 +41,7 @@ namespace Cartful.Service.Repositories
                     userName = reader.GetString(3),
                     password = reader.GetString(4),
                     phoneNumber = reader.GetString(5)
-                    
+
                 };
 
                 reader.Close();
@@ -60,7 +60,7 @@ namespace Cartful.Service.Repositories
         public async Task<IActionResult> CreateAsync(Account account)
         {
             _connection.Open();
-            
+
             string sql = "INSERT INTO [dbo].[user] (userID, firstName, lastName, userName, phoneNumber, password) VALUES (@Value1, @Value2, @Value3, @Value4, @Value5, @Value6)";
             SqlCommand command = new SqlCommand(sql, _connection);
 
@@ -90,7 +90,7 @@ namespace Cartful.Service.Repositories
         public async Task<IActionResult> CreateListAsync(ItemList list)
         {
             _connection.Open();
-            
+
             string sql = "Insert into [dbo].list (listID, userID, title) values (@Value1, @Value2, @Value3) ";
             SqlCommand command = new SqlCommand(sql, _connection);
 
@@ -98,7 +98,7 @@ namespace Cartful.Service.Repositories
             command.Parameters.AddWithValue("@Value1", list.listID);
             command.Parameters.AddWithValue("@Value2", list.userID);
             command.Parameters.AddWithValue("@Value3", list.title);
-           
+
 
             // Execute the command
             int rowsAffected = await command.ExecuteNonQueryAsync();
@@ -116,20 +116,36 @@ namespace Cartful.Service.Repositories
         }
 
 
+        // need to write out these functions
         // delete list from database
+        public async Task<ActionResult> DeleteListAsync(Guid listId)
+        {
+            await Task.Delay(1);
+            return new OkResult();
+        }
 
         // get all list belonging to a user
+        public async Task<List<ItemList>> GetAllListsAsync(Guid userId)
+        {
+            // place holder
+            await Task.Delay(1);
+            return new List<ItemList>();
+        }
 
         // add item to list
-        /*
-            input: item class
-            output: Action Result (200 OK)
-        */
+        public async Task<ActionResult> CreateAllItemsAsync(List<Item> items)
+        {
+            // place holder code
+            await Task.Delay(1);
+            return new OkResult();
+        }
 
         // get all items from list 
-        /*
-            input: listID
-            output: List<
-        */
+        public async Task<List<Item>> GetAllItemsAsync(Guid listId)
+        {
+            // place holder code
+            await Task.Delay(1);
+            return new List<Item>();
+        }
     }
 }

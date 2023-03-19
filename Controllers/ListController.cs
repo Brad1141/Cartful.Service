@@ -16,14 +16,14 @@ public class ListController : ControllerBase
         this.cartfulRepository = cartfulRepository;
     }
 
-    // [HttpGet]
-    // [Route("GetLists")]
-    // public async Task<ActionResult<List<ItemList>>> GetLists(Guid userId)
-    // {
-    //     // from list repo, call item repo to get all items 
-    //     List<ItemList> itemLists = await cartfulRepository.GetAllListAsync(userId);
-    //     return itemLists;
-    // }
+    [HttpGet]
+    [Route("GetLists")]
+    public async Task<ActionResult<List<ItemList>>> GetLists(Guid userId)
+    {
+        // from list repo, call item repo to get all items 
+        List<ItemList> itemLists = await cartfulRepository.GetAllListsAsync(userId);
+        return itemLists;
+    }
 
     [HttpPost]
     [Route("CreateList")]
@@ -42,16 +42,16 @@ public class ListController : ControllerBase
         List<Item> newItems = listDto.items;
 
         await cartfulRepository.CreateListAsync(newList);
-        // await cartfulRepository.CreateAsync(newItems);
+        await cartfulRepository.CreateAllItemsAsync(newItems);
         return CreatedAtAction(nameof(CreateList), new { id = newGuid }, newList);
 
     }
 
-    // [HttpDelete]
-    // [Route("DeleteList")]
-    // public async Task<IActionResult> DeleteList(Guid listId)
-    // {
-    //     await cartfulRepository.DeleteAsync(listId);
-    //     return Ok();
-    // }
+    [HttpDelete]
+    [Route("DeleteList")]
+    public async Task<IActionResult> DeleteList(Guid listId)
+    {
+        await cartfulRepository.DeleteListAsync(listId);
+        return Ok();
+    }
 }

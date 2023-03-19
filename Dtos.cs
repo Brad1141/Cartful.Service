@@ -6,4 +6,6 @@ namespace Cartful.Service.Dtos
 
     public record ListDto(string title, Guid userID, List<Item> items);
 
+    public record ItemDto(string itemName, bool isChecked);
+
 }
