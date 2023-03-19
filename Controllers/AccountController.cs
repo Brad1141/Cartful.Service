@@ -26,7 +26,7 @@ public class AccountController : ControllerBase
             password = password
         };
 
-        var result = await cartfulRepository.GetAsync(creds);
+        var result = await cartfulRepository.GetUserAsync(creds);
         return result;
     }
 
@@ -48,8 +48,8 @@ public class AccountController : ControllerBase
 
         };
 
-        await cartfulRepository.CreateAsync(newAccount);
+        await cartfulRepository.CreateUserAsync(newAccount);
         return CreatedAtAction(nameof(CreateAccount), new { id = newAccount.userId }, newAccount);
-        
+
     }
 }

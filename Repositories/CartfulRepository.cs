@@ -18,7 +18,7 @@ namespace Cartful.Service.Repositories
         }
 
         // get entry by id
-        public async Task<ActionResult<Account>> GetAsync(Account creds)
+        public async Task<ActionResult<Account>> GetUserAsync(Account creds)
         {
             _connection.Open();
 
@@ -57,7 +57,7 @@ namespace Cartful.Service.Repositories
         }
 
         // add item to db
-        public async Task<IActionResult> CreateAsync(Account account)
+        public async Task<IActionResult> CreateUserAsync(Account account)
         {
             _connection.Open();
 
@@ -115,37 +115,153 @@ namespace Cartful.Service.Repositories
 
         }
 
-
-        // need to write out these functions
-        // delete list from database
         public async Task<ActionResult> DeleteListAsync(Guid listId)
         {
-            await Task.Delay(1);
-            return new OkResult();
+             _connection.Open();
+            
+            string sql = "DELETE FROM [dbo].list WHERE listID=(@Value1)";
+            SqlCommand command = new SqlCommand(sql, _connection);
+
+            // Set the values of the parameters
+            command.Parameters.AddWithValue("@Value1", listId);
+           
+
+            // Execute the command
+            int rowsAffected = await command.ExecuteNonQueryAsync();
+            _connection.Close();
+
+            if (rowsAffected <= 0)
+            {
+                return new BadRequestResult();
+            }
+            else
+            {
+                return new OkResult();
+            }
         }
 
         // get all list belonging to a user
         public async Task<List<ItemList>> GetAllListsAsync(Guid userId)
         {
-            // place holder
-            await Task.Delay(1);
-            return new List<ItemList>();
+            try
+            {
+                _connection.Open();
+
+                string sql = "SELECT * FROM [dbo].list WHERE UserID = @UserId";
+                SqlCommand command = new SqlCommand(sql, _connection);
+
+                // Set the values of the parameters
+                command.Parameters.AddWithValue("@UserId", userId);
+
+                SqlDataReader reader = await command.ExecuteReaderAsync();
+
+                List<ItemList> itemLists = new List<ItemList>();
+
+                while (await reader.ReadAsync())
+                {
+                    ItemList itemList = new ItemList()
+                    {
+                        listID = reader.GetGuid(0),
+                        userID = reader.GetGuid(1),
+                        title = reader.GetString(2),
+                        items = new List<Item>()
+                    };
+
+                    itemLists.Add(itemList);
+                }
+
+                reader.Close();
+
+                foreach (ItemList itemList in itemLists)
+                {
+                    itemList.items = await GetAllItemsAsync(itemList.listID);
+                }
+
+                return itemLists;
+            }
+            finally
+            {
+                _connection.Close();
+            }
         }
 
+
         // add item to list
-        public async Task<ActionResult> CreateAllItemsAsync(List<Item> items)
+        public async Task<IActionResult> CreateAllItemsAsync(List<Item> items)
         {
-            // place holder code
-            await Task.Delay(1);
-            return new OkResult();
+            try
+            {
+                _connection.Open();
+
+                string sql = "INSERT INTO [dbo].item (itemID, listID, itemName, isChecked) VALUES (@ItemID, @ListID, @ItemName, @IsChecked)";
+                SqlCommand command = new SqlCommand(sql, _connection);
+
+                foreach (Item item in items)
+                {
+                    // Set the values of the parameters for each item in the list
+                    command.Parameters.Clear();
+                    command.Parameters.AddWithValue("@ItemID", item.itemID);
+                    command.Parameters.AddWithValue("@ListID", item.listID);
+                    command.Parameters.AddWithValue("@ItemName", item.itemName);
+                    command.Parameters.AddWithValue("@IsChecked", item.isChecked);
+
+                    // Execute the command for each item in the list
+                    int rowsAffected = await command.ExecuteNonQueryAsync();
+
+                    if (rowsAffected <= 0)
+                    {
+                        return new BadRequestResult();
+                    }
+                }
+
+                return new OkResult();
+            }
+            finally
+            {
+                _connection.Close();
+            }
         }
 
         // get all items from list 
-        public async Task<List<Item>> GetAllItemsAsync(Guid listId)
+        public async Task<List<Item>> GetAllItemsAsync(Guid listID)
         {
-            // place holder code
-            await Task.Delay(1);
-            return new List<Item>();
+            try
+            {
+                _connection.Open();
+
+                string sql = "SELECT * FROM [dbo].item WHERE ListID = @ListId";
+                SqlCommand command = new SqlCommand(sql, _connection);
+
+                // Set the values of the parameters
+                command.Parameters.AddWithValue("@ListId", listID);
+
+                SqlDataReader reader = await command.ExecuteReaderAsync();
+
+                List<Item> items = new List<Item>();
+
+                while (await reader.ReadAsync())
+                {
+                    Item item = new Item()
+                    {
+                        itemID = reader.GetGuid(0),
+                        listID = reader.GetGuid(1),
+                        itemName = reader.GetString(2),
+                        isChecked = reader.GetBoolean(3)
+                    };
+
+                    items.Add(item);
+                }
+
+                reader.Close();
+
+                return items;
+            }
+            finally
+            {
+                _connection.Close();
+            }
         }
+
     }
 }
+
