@@ -40,6 +40,12 @@ public class ListController : ControllerBase
         };
 
         List<Item> newItems = listDto.items;
+        foreach (Item item in newItems)
+        {
+            item.itemID = Guid.NewGuid();
+            item.listID = newList.listID;
+        }
+        newList.items = newItems;
 
         await cartfulRepository.CreateListAsync(newList);
         await cartfulRepository.CreateAllItemsAsync(newItems);

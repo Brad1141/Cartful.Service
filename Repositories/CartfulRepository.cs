@@ -56,7 +56,6 @@ namespace Cartful.Service.Repositories
 
         }
 
-        // add item to db
         public async Task<IActionResult> CreateUserAsync(Account account)
         {
             _connection.Open();
@@ -117,14 +116,14 @@ namespace Cartful.Service.Repositories
 
         public async Task<ActionResult> DeleteListAsync(Guid listId)
         {
-             _connection.Open();
-            
+            _connection.Open();
+
             string sql = "DELETE FROM [dbo].list WHERE listID=(@Value1)";
             SqlCommand command = new SqlCommand(sql, _connection);
 
             // Set the values of the parameters
             command.Parameters.AddWithValue("@Value1", listId);
-           
+
 
             // Execute the command
             int rowsAffected = await command.ExecuteNonQueryAsync();
@@ -161,16 +160,16 @@ namespace Cartful.Service.Repositories
                 {
                     ItemList itemList = new ItemList()
                     {
-                        listID = reader.GetGuid(0),
-                        userID = reader.GetGuid(1),
+                        listID = Guid.ParseExact(reader.GetString(0), "D"),
+                        userID = Guid.ParseExact(reader.GetString(1), "D"),
                         title = reader.GetString(2),
                         items = new List<Item>()
                     };
-
                     itemLists.Add(itemList);
                 }
 
                 reader.Close();
+                _connection.Close();
 
                 foreach (ItemList itemList in itemLists)
                 {
@@ -179,9 +178,13 @@ namespace Cartful.Service.Repositories
 
                 return itemLists;
             }
-            finally
+            catch (Exception ex)
             {
-                _connection.Close();
+                // Log the exception
+                Console.WriteLine($"Error: {ex.Message}");
+
+                // Return an error message to the user or take some other appropriate action
+                throw new Exception("An error occurred while getting all lists.");
             }
         }
 
@@ -243,10 +246,10 @@ namespace Cartful.Service.Repositories
                 {
                     Item item = new Item()
                     {
-                        itemID = reader.GetGuid(0),
-                        listID = reader.GetGuid(1),
+                        itemID = Guid.ParseExact(reader.GetString(0), "D"),
+                        listID = Guid.ParseExact(reader.GetString(1), "D"),
                         itemName = reader.GetString(2),
-                        isChecked = reader.GetBoolean(3)
+                        isChecked = reader.GetByte(3) == 1 ? true : false
                     };
 
                     items.Add(item);
