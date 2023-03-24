@@ -10,32 +10,48 @@ namespace Cartful.Service.Controllers;
 public class ListController : ControllerBase
 {
 
-    private readonly AccountRepository accountRepository;
-    public ListController(AccountRepository accountRepository)
+    private readonly CartfulRepository cartfulRepository;
+    public ListController(CartfulRepository cartfulRepository)
     {
-        this.accountRepository = accountRepository;
+        this.cartfulRepository = cartfulRepository;
+    }
+
+    [HttpGet]
+    [Route("GetLists")]
+    public async Task<ActionResult<List<ItemList>>> GetLists(Guid userId)
+    {
+        // from list repo, call item repo to get all items 
+        List<ItemList> itemLists = await cartfulRepository.GetAllListsAsync(userId);
+        return itemLists;
     }
 
     [HttpPost]
     [Route("CreateList")]
-    public async Task<IActionResult> CreateList(AccountDto accountDto)
+    public async Task<IActionResult> CreateList(ListDto listDto)
     {
         // generate guid
         Guid newGuid = Guid.NewGuid();
 
-        var newAccount = new Account
+        ItemList newList = new ItemList
         {
-            userId = newGuid,
-            firstName = accountDto.firstName,
-            lastName = accountDto.lastName,
-            userName = accountDto.userName,
-            password = accountDto.password,
-            phoneNumber = accountDto.phoneNumber
-
+            title = listDto.title,
+            userID = listDto.userID,
+            listID = newGuid
         };
 
-        await accountRepository.CreateAsync(newAccount);
-        return CreatedAtAction(nameof(CreateList), new { id = newAccount.userId }, newAccount);
+        List<Item> newItems = listDto.items;
 
+        await cartfulRepository.CreateListAsync(newList);
+        await cartfulRepository.CreateAllItemsAsync(newItems);
+        return CreatedAtAction(nameof(CreateList), new { id = newGuid }, newList);
+
+    }
+
+    [HttpDelete]
+    [Route("DeleteList")]
+    public async Task<IActionResult> DeleteList(Guid listId)
+    {
+        await cartfulRepository.DeleteListAsync(listId);
+        return Ok();
     }
 }
