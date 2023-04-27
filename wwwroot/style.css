@@ -31,8 +31,6 @@ body {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
-    max-width: 75vw;
-    min-width: 85vw;
     flex-grow: 1;
 }
 
@@ -40,15 +38,34 @@ body {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
+    justify-content: center;
+    background: #1f2937;
+    color: white;
+    width: 100%;
+    height: 7vh;
 }
 
 .main {
     display: flex;
-    flex-flow: row nowrap;
-    justify-content: space-around;
+    flex-flow: column nowrap;
     flex-grow: 1;
-    max-width: 75vw;
-    min-width: 85vw;
+    padding-top: 5vh;
+    gap: 1vh;
+    
+}
+
+.main img {
+    width: 10vw;
+}
+
+.main img:hover {
+    opacity: 0.8;
+}
+
+.demos-documents {
+    display: flex;
+    justify-content: center;
+    gap: 5vw;
 }
 
 .footer {
@@ -56,18 +73,50 @@ body {
     flex-flow: column nowrap;
     align-items: center;
     margin-top: auto;
-    background: lightgray;
+    background: #1f2937;
+    color: white;
+    height: 5vh;
 }
 
 .links {
     display: flex;
-    gap: 20px;
+    flex-grow: 1;
+    align-items: center;
+    font-size: 20px;
+    gap: 3vw;
 }
 
 .team-members {
+    display: flex;
+    gap: 5vw;
+    justify-content: center;
+}
 
+.team-member {
+    text-align: center;
+    font-size: 20px;
 }
 
 #nomargin {
     margin: 0px;
+}
+
+.overview {
+    display: flex;
+    justify-content: center;
+}
+
+#overview {
+    width: 70%;
+    font-size: 25px;
+    text-align: center;
+}
+
+#bottom-link {
+    color: white;
+    text-decoration: none
+}
+
+#bottom-link:hover {
+    opacity: 0.8;
 }
