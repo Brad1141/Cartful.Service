@@ -24,11 +24,15 @@ public class ItemController : ControllerBase
         return items;
     }
 
-    // replace Item w/ ItemDto
     [HttpPost]
     [Route("CreateItems")]
     public async Task<IActionResult> CreateItems([FromQuery] Guid listID, [FromBody] List<Item> items)
     {
+        foreach (var item in items)
+        {
+            item.itemID = Guid.NewGuid();
+            item.listID = listID;
+        }
         await cartfulRepository.CreateAllItemsAsync(items);
         return CreatedAtAction(nameof(CreateItems), new { id = items[0].itemID }, items);
     }
@@ -36,9 +40,9 @@ public class ItemController : ControllerBase
     //Delete Items
     [HttpDelete]
     [Route("DeleteItems")]
-    public async Task<ActionResult> DeleteItems([FromQuery] Guid listID, [FromBody] List<Guid> items)
+    public async Task<ActionResult> DeleteItems(Guid itemID)
     {
-        await Task.Delay(1);
+        await cartfulRepository.DeleteItemAsync(itemID);
         return new OkResult();
     }
 }

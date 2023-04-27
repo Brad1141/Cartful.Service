@@ -265,6 +265,31 @@ namespace Cartful.Service.Repositories
             }
         }
 
+        public async Task<ActionResult> DeleteItemAsync(Guid itemID)
+        {
+            _connection.Open();
+
+            string sql = "DELETE FROM [dbo].item WHERE itemID=(@Value1)";
+            SqlCommand command = new SqlCommand(sql, _connection);
+
+            // Set the values of the parameters
+            command.Parameters.AddWithValue("@Value1", itemID);
+
+
+            // Execute the command
+            int rowsAffected = await command.ExecuteNonQueryAsync();
+            _connection.Close();
+
+            if (rowsAffected <= 0)
+            {
+                return new BadRequestResult();
+            }
+            else
+            {
+                return new OkResult();
+            }
+        }
+
     }
 }
 
