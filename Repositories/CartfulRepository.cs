@@ -60,7 +60,7 @@ namespace Cartful.Service.Repositories
         {
             _connection.Open();
 
-            string sql = "INSERT INTO [dbo].[user] (userID, firstName, lastName, userName, phoneNumber, password) VALUES (@Value1, @Value2, @Value3, @Value4, @Value5, @Value6)";
+            string sql = "INSERT INTO [dbo].[user] (userID, firstName, lastName, userName, password, phoneNumber) VALUES (@Value1, @Value2, @Value3, @Value4, @Value5, @Value6)";
             SqlCommand command = new SqlCommand(sql, _connection);
 
             // Set the values of the parameters
