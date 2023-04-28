@@ -43,6 +43,7 @@ body {
     color: white;
     width: 100%;
     height: 7vh;
+    min-height: 70px;
 }
 
 .main {
@@ -86,10 +87,23 @@ body {
     gap: 3vw;
 }
 
+#github {
+    height: 1.5vh;
+    width: 1.5vh;
+}
+
+.github-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5vw;
+}
+
 .team-members {
     display: flex;
     gap: 5vw;
     justify-content: center;
+    margin-top: 4vh;
 }
 
 .team-member {
